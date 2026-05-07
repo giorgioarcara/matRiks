@@ -15,6 +15,7 @@ draw(
   bg = "white",
   mar = c(1, 1, 1, 1),
   xlim = 16,
+  oma = c(4, 4, 0.2, 0.2),
   ...
 )
 
@@ -26,6 +27,7 @@ draw(
   bg = "white",
   mar = c(1, 1, 1, 1),
   xlim = 16,
+  oma = c(4, 4, 0.2, 0.2),
   ...
 )
 
@@ -37,6 +39,7 @@ draw(
   bg = "white",
   mar = c(1, 1, 1, 1),
   xlim = 16,
+  oma = c(4, 4, 0.2, 0.2),
   ...
 )
 
@@ -48,6 +51,7 @@ draw(
   bg = "white",
   mar = c(1, 1, 1, 1),
   xlim = 16,
+  oma = c(4, 4, 0.2, 0.2),
   distractors = NULL,
   labels = NULL,
   print = FALSE,
@@ -69,6 +73,8 @@ draw(
 \item{mar}{numeric vector, change margins of the canvas}
 
 \item{xlim}{numeric, change the length of the x axis}
+
+\item{oma}{numeric vector, change the outer margins of the whole figure. Default is c(4,4,0.2,0.2)}
 
 \item{...}{other arguments}
 
