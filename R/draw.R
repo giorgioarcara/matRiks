@@ -112,6 +112,7 @@ draw.matriks <- function(obj, main = NULL, canvas = TRUE,
                          bg = "white", mar=c(1,1,1,1), xlim=16,
                          oma = c(4,4,0.2,0.2), ...) {
   oldpar <- par(no.readonly = TRUE)
+  oldpar <- oldpar[!names(oldpar) %in% c("pin", "fin", "plt", "pty")]
   on.exit(par(oldpar))
   # ti prego non arrabbiarti
   # come non fungeva più per ragioni che boh, ho capito che aveva bisogno di nuove funzioni (cof.double e cof.numeric)
@@ -188,6 +189,7 @@ draw.responses <- function(obj, main = FALSE, canvas = TRUE,
                            print = FALSE, frow = NULL,
                            ...) {
   oldpar <- par(no.readonly = TRUE)
+  oldpar <- oldpar[!names(oldpar) %in% c("pin", "fin", "plt", "pty")]
   on.exit(par(oldpar))
   if (is.null(distractors)) distractors <- 1:length(obj)
   if (is.null(frow)) frow = c(2, round(length(distractors)/2 + 0.2))
@@ -225,3 +227,47 @@ draw.responses <- function(obj, main = FALSE, canvas = TRUE,
 }
 
 
+#' Draw a matriks and its response list on the same device
+#'
+#' Draws a matriks in the upper portion of the device and its response list
+#' in the lower portion. Uses \code{cowplot} to capture each base R plot
+#' independently and compose them, avoiding layout conflicts between the two
+#' draw calls.
+#'
+#' @param mat A matriks object to be drawn in the upper panel
+#' @param resp A responses object to be drawn in the lower panel
+#' @param resp_height numeric, proportion of the device height allocated to the
+#'   response list. Must be between 0 and 1. Default is 0.3.
+#' @param frow numeric vector of length 2 (nrow, ncol), layout of the response
+#'   options panel. Default is c(1, 4).
+#' @param mat_args list, additional arguments passed to \code{draw(mat, ...), default hide=TRUE}
+#' @param resp_args list, additional arguments passed to \code{draw(resp, ...)}
+#'
+#' @return A ggplot/cowplot object rendered to the current device
+#' @import cowplot
+#' @export
+#'
+#' @examples
+#' my_mat <- mat_apply(cof(circle(), luck(), pacman()), "shade", "shape")
+#' my_resp <- response_list(my_mat)
+#' draw_combined(my_mat, my_resp, resp_height = 0.3)
+draw_combined <- function(mat, resp,
+                          resp_height = 0.3,
+                          frow = NULL,
+                          mat_args = list(hide=TRUE),
+                          resp_args = list()) {
+  
+  g_mat <- cowplot::as_grob(function() {
+    do.call(draw, c(list(mat), mat_args))
+  })
+  
+  g_resp <- cowplot::as_grob(function() {
+    resp_call <- c(list(resp), resp_args)
+    if (!is.null(frow)) resp_call <- c(resp_call, list(frow = frow))
+    do.call(draw, resp_call)
+  })
+  
+  cowplot::plot_grid(g_mat, g_resp,
+                     ncol = 1,
+                     rel_heights = c(1 - resp_height, resp_height))
+}
