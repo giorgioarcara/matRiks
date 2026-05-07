@@ -161,7 +161,7 @@ draw.matriks<- function(obj, main = NULL, canvas = TRUE,
 #' @param ... other arguments
 #'
 #' @return A graphic of the matriks
-#' @export draw.matriks
+#' @export draw.responses
 #' @export
 #'
 #' @examples
