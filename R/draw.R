@@ -9,6 +9,7 @@
 #' @param bg character, define the color background. Default is white
 #' @param mar numeric vector, change margins of the canvas
 #' @param xlim numeric, change the length of the x axis
+#' @param oma numeric vector, change the outer margins of the whole figure. Default is c(4,4,0.2,0.2)
 #' @param ... other arguments
 #'
 #' @return A graphic
@@ -25,7 +26,8 @@
 #' draw(size(circle(), 2), canvas = FALSE)
 draw <- function(obj, main = NULL, canvas = TRUE,
                  hide = FALSE,
-                 bg = "white",mar=c(1,1,1,1),xlim=16, ...) {
+                 bg = "white", mar=c(1,1,1,1), xlim=16,
+                 oma = c(4,4,0.2,0.2), ...) {
   UseMethod("draw")
 }
 
@@ -40,6 +42,7 @@ draw <- function(obj, main = NULL, canvas = TRUE,
 #' @param bg character, define the color background. Default is white
 #' @param mar numeric vector, change margins of the canvas
 #' @param xlim numeric, change the length of the x axis
+#' @param oma numeric vector, change the outer margins of the whole figure. Default is c(4,4,0.2,0.2)
 #' @param ... other arguments
 #'
 #' @return A graphic of the figure
@@ -53,12 +56,13 @@ draw <- function(obj, main = NULL, canvas = TRUE,
 #'
 #' # draw a circle inside the other
 #' draw.figure(size(circle(), 2), canvas = FALSE)
-draw.figure<- function(obj, main = NULL, canvas = TRUE,
-                       hide = FALSE,
-                       bg = "white",mar=c(1,1,1,1),xlim=16, ...) {
+draw.figure <- function(obj, main = NULL, canvas = TRUE,
+                        hide = FALSE,
+                        bg = "white", mar=c(1,1,1,1), xlim=16,
+                        oma = c(4,4,0.2,0.2), ...) {
   if (canvas == TRUE)
   {
-    DescTools::Canvas(xlim=xlim,mar=mar, main = main, bg = bg)
+    DescTools::Canvas(xlim=xlim, mar=mar, main = main, bg = bg, ...)
   }
   for(j in 1:length(obj$shape))
   {
@@ -67,18 +71,18 @@ draw.figure<- function(obj, main = NULL, canvas = TRUE,
       if(obj$num[[j]][1]==1){
         DescTools::DrawRegPolygon(x = obj$pos.x[[j]], y = obj$pos.y[[j]], rot = obj$rotation[[j]],
                                   radius.x = obj$size.x[[j]], radius.y = obj$size.y[[j]], nv = obj$nv[[j]],
-                                  lty=obj$lty[[j]],lwd=obj$lwd[[j]],col = obj$shade[[j]])
-
+                                  lty=obj$lty[[j]], lwd=obj$lwd[[j]], col = obj$shade[[j]])
+        
       }else{
         DescTools::DrawCircle(x = obj$pos.x[[j]], y = obj$pos.y[[j]],
-                              r.out = obj$size.x[[j]],r.in= obj$size.y[[j]],
+                              r.out = obj$size.x[[j]], r.in= obj$size.y[[j]],
                               theta.1=obj$theta.1[[j]],
                               theta.2=obj$theta.2[[j]], nv = obj$nv[[j]],
-                              lty=obj$lty[[j]],lwd=obj$lwd[[j]],col = obj$shade[[j]])
+                              lty=obj$lty[[j]], lwd=obj$lwd[[j]], col = obj$shade[[j]])
       }
     }
   }
-
+  
 }
 
 #' @describeIn draw Draw Matriks
@@ -92,6 +96,7 @@ draw.figure<- function(obj, main = NULL, canvas = TRUE,
 #' @param bg character, define the color background. Default is white
 #' @param mar numeric vector, change margins of the canvas
 #' @param xlim numeric, change the length of the x axis
+#' @param oma numeric vector, change the outer margins of the whole figure. Default is c(4,4,0.2,0.2)
 #' @param ... other arguments
 #'
 #' @return A graphic of the matriks
@@ -102,9 +107,10 @@ draw.figure<- function(obj, main = NULL, canvas = TRUE,
 #' # draw a matriks
 #' my_mat <- mat_apply(cof(circle(), luck(), pacman()), "shade", "shape")
 #' draw(my_mat)
-draw.matriks<- function(obj, main = NULL, canvas = TRUE,
-                        hide = FALSE,
-                        bg = "white",mar=c(1,1,1,1),xlim=16, ...) {
+draw.matriks <- function(obj, main = NULL, canvas = TRUE,
+                         hide = FALSE,
+                         bg = "white", mar=c(1,1,1,1), xlim=16,
+                         oma = c(4,4,0.2,0.2), ...) {
   oldpar <- par(no.readonly = TRUE)
   on.exit(par(oldpar))
   # ti prego non arrabbiarti
@@ -114,32 +120,32 @@ draw.matriks<- function(obj, main = NULL, canvas = TRUE,
   # sicuramente tu hai una soluzione più elegante ma ora la solzuzione qui and dirty è:
   # il probklema di questa soluzion eè che è stata estesa a tutto
   n.cell <- obj$mat.type
-
+  
   squares <- paste0("Sq", 1:9)
   if (n.cell == 9) {
     par(
       mfrow = c(3, 3),
       mar = c(0.5, 6, 0.5, 2) + .1,
       mai = c(.1, .1, .1, .1),
-      oma = c(4, 4, 0.2, 0.2)
+      oma = oma
     )
-
+    
   } else if (n.cell == 4) {
     par(
       mfrow = c(2, 2),
       mar = c(0.5, 6, 0.5, 2) + .1,
       mai = c(.1, .1, .1, .1),
-      oma = c(4, 4, 0.2, 0.2)
+      oma = oma
     )
   }
-
-  if (hide == TRUE){n.cell<-n.cell-1}
+  
+  if (hide == TRUE){n.cell <- n.cell-1}
   for (i in 1:n.cell)
   {
     DescTools::Canvas(xlim=16,mar=c(1,1,1,1), main = main, bg = bg)
     draw(obj[[squares[[i]]]],canvas = FALSE)
   }
-
+  
 }
 
 
@@ -154,6 +160,7 @@ draw.matriks<- function(obj, main = NULL, canvas = TRUE,
 #' @param bg character, define the color background. Default is white
 #' @param mar numeric vector, change margins of the canvas
 #' @param xlim numeric, change the length of the x axis
+#' @param oma numeric vector, change the outer margins of the whole figure. Default is c(4,4,0.2,0.2)
 #' @param distractors integer, default length of the response list. Works also with a character vector with the labels of the desired distractors.
 #' @param labels character, alternative labels to be printed as the main title of the distractors (main = TRUE). The labels must have the same length as the vector of distractors.
 #' @param print logical, print all the distractors together (default, FALSE) or one by one (TRUE)
@@ -175,14 +182,15 @@ draw.matriks<- function(obj, main = NULL, canvas = TRUE,
 #' draw(my_resp)
 draw.responses <- function(obj, main = FALSE, canvas = TRUE,
                            hide = FALSE,
-                           bg = "white",mar=c(1,1,1,1),xlim=16,
+                           bg = "white", mar=c(1,1,1,1), xlim=16,
+                           oma = c(4,4,0.2,0.2),
                            distractors = NULL, labels = NULL,
                            print = FALSE, frow = NULL,
                            ...) {
   oldpar <- par(no.readonly = TRUE)
   on.exit(par(oldpar))
   if (is.null(distractors)) distractors <- 1:length(obj)
-  if (is.null(frow)) frow = c(2, round(length(distractors)/2 +0.2) )
+  if (is.null(frow)) frow = c(2, round(length(distractors)/2 + 0.2))
   if (prod(frow) < length(distractors)) stop("There's not enough space for all the selected response options, increase frow")
   if (is.null(labels) == TRUE) {
     labels <- names(obj)
@@ -190,17 +198,20 @@ draw.responses <- function(obj, main = FALSE, canvas = TRUE,
     labels <- labels
     main <- TRUE
   }
-
+  
   if (print == FALSE) {
     par(mfrow = frow,
         mar = c(0.5, 6, 0.5, 2) + .1,
-        mai=c(.1,.1,.1,.1),oma=c(4,4,0.2,0.2) )
-
+        mai = c(.1, .1, .1, .1),
+        oma = oma)
+    
   } else {
-    par(mfrow = c(1, 1), mar = c(0.5, 6, 0.5, 2) + .1,
-        mai=c(.1,.1,.1,.1),oma=c(4,4,0.2,0.2) )
+    par(mfrow = c(1, 1),
+        mar = c(0.5, 6, 0.5, 2) + .1,
+        mai = c(.1, .1, .1, .1),
+        oma = oma)
   }
-
+  
   if (main == TRUE) {
     for (i in 1:length(distractors)) {
       draw(obj[[distractors[i]]], main = labels[i])
@@ -210,7 +221,7 @@ draw.responses <- function(obj, main = FALSE, canvas = TRUE,
       draw(obj[[distractors[i]]])
     }
   }
-
+  
 }
 
 
