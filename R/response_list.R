@@ -62,3 +62,32 @@ response_list.matriks <- function(obj, seed = 666, ...) {
   class(resp) <- "responses"
   return(resp)
 }
+
+#' Sample a random subset of responses (including correct one)
+#'
+#' @param responses A responses object (named list)
+#' @param n_resp integer, number of responses to sample. Default is 4.
+#' @param ... other arguments
+#'
+#' @return A responses object of length n_resp, always including the correct
+#'   response (index 1), with order shuffled.
+#' @export
+sample_resp <- function(responses, n_resp = 4, ...) {
+  UseMethod("sample_resp")
+}
+
+#' @describeIn sample_resp Sample responses
+#' @export
+sample_resp.responses <- function(responses, n_resp = 4, ...) {
+  stopifnot("length of responses must be >= n_resp" = length(responses) >= n_resp)
+  
+  # always include correct response (index 1), sample the rest
+  idx <- c(1, sample(2:length(responses), n_resp - 1))
+  # shuffle
+  idx_shuffled <- idx[sample(n_resp)]
+  
+  resp_shuffled <- responses[idx_shuffled]
+  class(resp_shuffled) <- "responses"
+  
+  return(resp_shuffled)
+}
